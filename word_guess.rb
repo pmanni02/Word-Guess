@@ -7,6 +7,7 @@ class Words
     @category = category
     @lives = 5
     @word = @category.sample
+
   end
 
   def dash
@@ -41,10 +42,14 @@ class Words
   def match_and_replace(guess)
     letter_array = split_word
     if letter_array.include? guess
-      puts "array includes gues"
-      puts "#{letter_array.index(guess)}"
+      puts "#{p letter_array.each_index.select{|i| letter_array[i] == guess}}"
+      indices = p letter_array.each_index.select{|i| letter_array[i] == guess}
+      dash_array = dash
+      indices.each do |index|
+        dash_array[index] = guess
+      end
+      print dash_array
     end
-
   end
 
 end
