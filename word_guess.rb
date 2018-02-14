@@ -1,85 +1,148 @@
-#categories
 simpsons = %w[Homer Marge Lisa Bart Nelson Ned Maggie]
+
+class Game
+  attr_accessor :lives, :word_bank, :initial_tries, :dashes, :flower_pot, :random_word
+
+  def initialize(word_bank)
+    @word_bank = word_bank
+    @random_word = @word_bank.sample
+    @lives = 5
+    @initial_tries = %w[(@) (@) (@) (@) (@)]
+    @dashes = get_init_dashes
+    @flower_pot = "  ,\\,\\,|,/,/,
+     _\\|/_
+    |_____|
+     |   |
+     |___|"
+    # @game_status = GameStatus.new
+    # @display = Display.new
+  end
+
+  # Gives us array of dashes with number of letters
+  def get_init_dashes
+    length = @random_word.length
+    bucket_of_dash = []
+    length.times do
+      bucket_of_dash << " __ "
+    end
+    return bucket_of_dash
+  end
+end
+
 
 class Words
 
-  def initialize(category)
-    @category = category
+  attr_accessor :split_letter_array, :correct_guesses, :lives, :selected_word, :initial_tries
+
+  def initialize(random_word, game_dashes)
+    @selected_word = random_word
+    @correct_guesses = ""
+    @split_letter_array = []
     @lives = 5
-    @word = @category.sample
-
-  end
-
-  def dash
-    puts "#{@word}"
-    dashes = []
-    puts "#{@word.length}"
-    length = @word.length
-    puts "The word length is: #{length}"
-    length.times do
-      dashes << " __ "
-    end
-      # print " __ "
-    return dashes
+    @initial_tries = %w[(@) (@) (@) (@) (@)]
+    @dashes = game_dashes
+    # @dash_array = dash
   end
 
   def split_word
-    letters = @word.split("")
-    print letters
-    return letters
+    letters = @selected_word.split("")
+    @split_letter_array = letters
   end
 
-  # def guess
-
-  #   puts "Enter letter: "
-  #   until valid_letter(guess)
-  #     puts "Enter valid letter: "
-  #     guess = gets.chomp
-  #   end
-  #   return guess
-  # end
-
   def match_and_replace(guess)
-    letter_array = split_word
-    if letter_array.include? guess
-      puts "#{p letter_array.each_index.select{|i| letter_array[i] == guess}}"
-      indices = p letter_array.each_index.select{|i| letter_array[i] == guess}
-      dash_array = dash
-      indices.each do |index|
-        dash_array[index] = guess
+      #indices = split_word.each_index.select{|i| split_word[i] == guess}
+      indices = []
+      split_word.each_index do |i|
+        if split_word[i] == guess
+        indices << i
+        end
       end
-      print dash_array
+
+      puts "Indices is #{indices}"
+      indices.each do |index|
+        puts "dashes is #{@dashes}"
+        @dashes[index] = guess
+        puts "new dashes is #{@dashes}"
+        @correct_guesses << guess
+      end
+  end
+
+  def remove_life
+    @lives -= 1
+    @initial_tries.pop()
+  end
+
+
+  def valid_letter(input_guess)
+    if input_guess =~ /[a-zA-Z]/ # Come back to duplicates || input_guess != (@correct_guesses.include? input_guess)
+      return true
+    else
+      return false
     end
   end
 
 end
 
+our_game = Game.new(simpsons)
+current_game = Words.new(our_game.random_word, our_game.dashes)
 
-
-def valid_letter(input_guess)
-  if input_guess =~ /[a-zA-Z]/
-    return true
-  else
-    return false
-  end
+our_game.initial_tries.each do |flower|
+  print flower
 end
 
-test = Words.new(simpsons)
-# test.random_word
-puts "#{test.dash}"
-test.split_word
-puts "Enter letter: "
+puts "\n#{our_game.flower_pot}"
+our_game.dashes.each do |dash|
+  print dash
+end
+
+puts our_game.random_word
+
+puts "Guess a letter: "
 guess = gets.chomp
-until valid_letter(guess)
+
+until current_game.valid_letter(guess)
   puts "Enter valid letter: "
   guess = gets.chomp
 end
-test.match_and_replace(guess)
-# i = 1
-#
-# while lives =! 0
-# puts "Guess: "
-# guess
-# counter += 1
-# puts "Guess number #{counter} is #{guess}"
+
+if current_game.split_word.include? guess
+  current_game.match_and_replace(guess)
+else
+  current_game.remove_life
+end
+
+# continue = " "
+# while continue != n
+  our_game.initial_tries.each do |flower|
+    print flower
+  end
+
+  puts "\n#{our_game.flower_pot}"
+  our_game.dashes.each do |dash|
+    print dash
+  end
+
+  puts our_game.random_word
+
+  puts "Guess a letter: "
+  guess = gets.chomp
+
+  until current_game.valid_letter(guess)
+    puts "Enter valid letter: "
+    guess = gets.chomp
+  end
+
+  if current_game.split_word.include? guess
+    current_game.match_and_replace(guess)
+  else
+    current_game.remove_life
+  end
+
 # end
+
+puts "#{our_game.random_word}"
+puts "#{current_game.selected_word}"
+puts "#{current_game.split_word}"
+puts our_game.lives.class
+puts current_game.lives
+puts current_game.initial_tries
