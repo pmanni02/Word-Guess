@@ -7,7 +7,16 @@ class Game
     @word_bank = word_bank
     @random_word = @word_bank.sample
     @lives = 5
-    @initial_tries = %w[(@) (@) (@) (@) (@)]
+    @dounut_pic = "
+   _..------.._
+  .'   .-\"\"-.   '.
+  |\\   '----'   /|
+  \\ `'--------'` /
+  '._        _.'
+     `\"\"\"\"\"\"`
+     "
+    # @initial_tries = %w[(@) (@) (@) (@) (@)]
+    @initial_tries = [@dounut_pic, @dounut_pic, @dounut_pic, @dounut_pic, @dounut_pic]
     @dashes = get_init_dashes
     @flower_pot = "  ,\\,\\,|,/,/,
      _\\|/_
@@ -77,11 +86,11 @@ class Words
 end
 
 def display(current_game, our_game)
-   current_game.tries_left.each do |flower|
-    print flower
+   current_game.tries_left.each do |donut|
+    print donut
   end
 
-  puts "\n#{our_game.flower_pot}"
+  # puts "\n#{our_game.flower_pot}"
   our_game.dashes.each do |dash|
     print dash
   end
@@ -93,13 +102,33 @@ while continue != "n"
   our_game = Game.new(simpsons)
   current_game = Words.new(our_game.random_word, our_game.dashes, our_game.initial_tries, our_game.lives)
 
-  puts "\n\nWelcome to Simpsons Word Guess!\n\n"
+  # puts "\n\nWelcome to Simpsons Word Guess!\n\n"
+  puts "
+                                 ___    _
+                                  | |_||_
+      sssSSSSSs                   | | ||_
+   sSSSSSSSSSSSs                           sSSSSs             nn   sSSSs
+  SSSS           ii  mM     mmm   pPPPPpp sSS           nn    nn sSSSSSS
+ SSSs           iII mMMMM  mMmmm pPP  PpppSs      oOoo  nNN   nN SS   SS
+ SSSs           iII mMMMMM mM Mm Pp     PPSSSSs  OOOOOO NNNn nNN SSSs
+ SSSSSSSssss    iIi mMM MMmM  Mm ppPPppPP  SSSSsoO   OO NNNNNNNN  SSSSss
+    SSSSSSSSSs  iIi MMM  MMM  Mm PPPPppP      sSOO   OO NN  nNNN     SSSs
+          SSSS IIi  mMM  MMm  Mm  Pp   sSSssSSSSOO ooOO nN   NN        SS
+           sSS III   MM       MMm pPp    SSSSSS  OOOOO          sssssSsSS
+sSSsssssSSSSS   II                                               SSSSSSS TM
+  SSSSSSSSS
 
-  our_game.initial_tries.each do |flower|
-    print flower
+  "
+puts "Homer gave you five donuts (tries). Every time you guess incorrectly, he eats one of your donuts!"
+  # our_game.initial_tries.each do |flower|
+  #   print flower
+  # end
+
+  our_game.initial_tries.each do |donut|
+    print donut
   end
-
-  puts "\n#{our_game.flower_pot}"
+  puts "\n\n\n"
+  # puts "\n#{our_game.flower_pot}"
   our_game.dashes.each do |dash|
     print dash
   end
@@ -107,7 +136,7 @@ while continue != "n"
   # puts our_game.random_word
 
   until current_game.words_lives == 0 || current_game.correct_guesses.length == our_game.random_word.length
-    print "\nGuess a letter: "
+    print "\n\nGuess a letter: "
     guess = gets.chomp
 
     until current_game.valid_letter(guess)
@@ -125,8 +154,8 @@ while continue != "n"
   end
 
   if current_game.words_lives == 0
-    puts "You lost"
-    puts "The correct answer was #{current_game.selected_word}"
+    puts "You lost. DOH!"
+    puts "The correct answer was #{current_game.selected_word.upcase}!"
     simpsons.delete(current_game.selected_word)
   else
     puts "You win"
