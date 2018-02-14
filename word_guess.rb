@@ -1,12 +1,12 @@
 require 'faker'
 
+#creates array with 10 random names. partitions first name of each character
 simpsons = []
 10.times do
   name = Faker::Simpsons.character.downcase
   name = name.partition(" ").first
   simpsons << name
 end
-# simpsons = %w[homer marge lisa bart nelson ned maggie patty selma milhouse duffman itchy scratchy krusty lovejoy apu sherri terri]
 
 class Game
   attr_accessor :lives, :word_bank, :initial_tries, :dashes, :flower_pot, :random_word
@@ -23,17 +23,11 @@ class Game
   '._        _.'
      `\"\"\"\"\"\"`
      "
-    # @initial_tries = %w[(@) (@) (@) (@) (@)]
     @initial_tries = [@dounut_pic, @dounut_pic, @dounut_pic, @dounut_pic, @dounut_pic]
     @dashes = get_init_dashes
-    @flower_pot = "  ,\\,\\,|,/,/,
-     _\\|/_
-    |_____|
-     |   |
-     |___|"
   end
 
-  # Gives us array of dashes with number of letters
+  # Gives us array of dashes based on number of letters in random_word
   def get_init_dashes
     length = @random_word.length
     bucket_of_dash = []
@@ -57,13 +51,14 @@ class Words
     @tries_left = initial_tries
   end
 
+  #splits word into array of letter strings
   def split_word
     letters = @selected_word.split("")
     @split_letter_array = letters
   end
 
+  #for correct_guesses letter is input into dash array
   def match_and_replace(guess)
-      #indices = split_word.each_index.select{|i| split_word[i] == guess}
       indices = []
       split_word.each_index do |i|
         if split_word[i] == guess
@@ -77,12 +72,13 @@ class Words
       end
   end
 
+
   def remove_life
     @words_lives -= 1
     @tries_left.pop()
   end
 
-
+  #checks for alpha input
   def valid_letter(input_guess)
     if input_guess =~ /[a-zA-Z]/
       return true
@@ -93,12 +89,12 @@ class Words
 
 end
 
+#displays donuts which represent tries. and displays letters guessed
 def display(current_game, our_game)
    current_game.tries_left.each do |donut|
     print donut
   end
 
-  # puts "\n#{our_game.flower_pot}"
   our_game.dashes.each do |dash|
     print dash
   end
@@ -107,10 +103,10 @@ end
 
 continue = " "
 while continue != "n"
+  #initializes each new game
   our_game = Game.new(simpsons)
   current_game = Words.new(our_game.random_word, our_game.dashes, our_game.initial_tries, our_game.lives)
 
-  # puts "\n\nWelcome to Simpsons Word Guess!\n\n"
   puts "
                                  ___    _
                                   | |_||_
@@ -128,21 +124,17 @@ sSSsssssSSSSS   II                                               SSSSSSS TM
 
   "
 puts "Homer gave you five donuts (tries). Every time you guess incorrectly, he eats one of your donuts!"
-  # our_game.initial_tries.each do |flower|
-  #   print flower
-  # end
 
+  #shows initial donuts and displays dash array
   our_game.initial_tries.each do |donut|
     print donut
   end
   puts "\n\n\n"
-  # puts "\n#{our_game.flower_pot}"
   our_game.dashes.each do |dash|
     print dash
   end
-  # display(current_game, our_game)
-  # puts our_game.random_word
 
+  #runs until user wins or loses
   until current_game.words_lives == 0 || current_game.correct_guesses.length == our_game.random_word.length
     print "\n\nGuess a letter: "
     guess = gets.chomp
@@ -152,24 +144,28 @@ puts "Homer gave you five donuts (tries). Every time you guess incorrectly, he e
       guess = gets.chomp
     end
 
+    #if guess is correct, call match_and_replace
     if current_game.split_word.include? guess
       current_game.match_and_replace(guess)
     else
+      #if guess is incorrect, call remove life
       current_game.remove_life
     end
     display(current_game, our_game)
-    # puts "#{our_game.dashes}"
   end
 
+  #ask if they want to play again after game
   if current_game.words_lives == 0
     puts "You lost. DOH!"
     puts "The correct answer was #{current_game.selected_word.upcase}!"
+    #deletes words already used in gameplay
     simpsons.delete(current_game.selected_word)
   else
     puts "You win"
     simpsons.delete(current_game.selected_word)
   end
 
+  
   puts "Would you like to continue? (y/n)"
   continue = gets.chomp.downcase
   valid_continue_options = ["y", "n"]
