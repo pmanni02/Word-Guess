@@ -1,4 +1,12 @@
-simpsons = %w[homer marge lisa bart nelson ned maggie patty selma milhouse duffman itchy scratchy krusty lovejoy apu sherri terri]
+require 'faker'
+
+simpsons = []
+10.times do
+  name = Faker::Simpsons.character.downcase
+  name = name.partition(" ").first
+  simpsons << name
+end
+# simpsons = %w[homer marge lisa bart nelson ned maggie patty selma milhouse duffman itchy scratchy krusty lovejoy apu sherri terri]
 
 class Game
   attr_accessor :lives, :word_bank, :initial_tries, :dashes, :flower_pot, :random_word
